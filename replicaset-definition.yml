@@ -14,7 +14,7 @@ spec:
         type: front-end
     spec:
       containers:
-        - name: ngonx-container
+        - name: nginx-container
           image: nginx    
   replicas: 4
   selector:
