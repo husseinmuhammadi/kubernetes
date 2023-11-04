@@ -217,7 +217,15 @@ kube-system   kube-scheduler-debian-2gb-hel1-1            1/1     Running   0   
 ```
 
 #### Join worker nodes
+```shell
+$ kubeadm token create --print-join-command
+```
 
+```shell
+sudo kubeadm join 65.109.143.100:6443 --token f7v1u4.dmpqqqcik4800mrs \
+        --discovery-token-ca-cert-hash sha256:60bd91c45fb57825f6d792d9d95a5e438194b42c499c2478eee84d51549df024 \
+        --cri-socket=unix:///var/run/cri-dockerd.sock
+```
 
 ## Troubleshooting
 
