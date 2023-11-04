@@ -216,6 +216,9 @@ kube-system   kube-proxy-pqgkb                            1/1     Running   0   
 kube-system   kube-scheduler-debian-2gb-hel1-1            1/1     Running   0          36m
 ```
 
+#### Join worker nodes
+
+
 ## Troubleshooting
 
 ```shell
