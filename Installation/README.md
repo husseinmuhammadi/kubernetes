@@ -238,6 +238,8 @@ $ sudo kubeadm join 65.109.143.100:6443 --token f7v1u4.dmpqqqcik4800mrs \
 
 ### Reset Kubeadm
 
+[kubeadm reset](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/)
+
 Run command below on all nodes
 
 ```shell
