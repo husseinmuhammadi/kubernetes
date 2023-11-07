@@ -79,7 +79,7 @@ wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
 Install GO lang
 
 ```shell
-tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
 
 export PATH=$PATH:/usr/local/go/bin
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
@@ -137,6 +137,9 @@ To see the stack trace of this error execute with --v=5 or higher
 
 ```shell
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/cri-dockerd.sock
+```
+```shell
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --control-plane-endpoint="10.0.0.2:6443" --cri-socket=unix:///var/run/cri-dockerd.sock
 ```
 
 ```text
@@ -234,9 +237,39 @@ $ sudo kubeadm join 65.109.143.100:6443 --token f7v1u4.dmpqqqcik4800mrs \
         --cri-socket=unix:///var/run/cri-dockerd.sock
 ```
 
+#### Change internal IP for worker nodes
+[kubeadm should make the --node-ip option available](https://github.com/kubernetes/kubeadm/issues/203)
+https://stackoverflow.com/questions/54942488/how-to-change-the-internal-ip-of-kubernetes-worker-nodes
+https://medium.com/@kanrangsan/how-to-specify-internal-ip-for-kubernetes-worker-node-24790b2884fd
+
+edit `/etc/systemd/system/kubelet.service.d/10-kubeadm.conf`
+add the `--node-ip` flag to `KUBELET_CONFIG_ARGS`
+
+```text
+KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --node-ip=10.0.0.3
+```
+
+restart the kubelet service
+```shell
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+
 ## Troubleshooting
 
+    ### Remove worker nodes
+
+```shell
+kubectl drain <node-name>
+```
+
+```shell
+kubectl delete node <node-name>
+```
+
 ### Reset Kubeadm
+
+[kubeadm reset](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/)
 
 Run command below on all nodes
 
