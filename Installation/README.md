@@ -257,6 +257,16 @@ sudo systemctl restart kubelet
 
 ## Troubleshooting
 
+    ### Remove worker nodes
+
+```shell
+kubectl drain <node-name>
+```
+
+```shell
+kubectl delete node <node-name>
+```
+
 ### Reset Kubeadm
 
 [kubeadm reset](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/)
