@@ -124,11 +124,11 @@ Remove all web-app deployment before installing NGINX Ingress Conroller
 ## Install NGINX Ingress Controller
 
 ### Step 1: Installation of nginx-ingress
-You will find more detail about installing nginx-ingress in this [website](https://www.adaltas.com/en/2022/09/08/kubernetes-metallb-nginx/#step-1-installation-of-nginx-ingress)
 
-To deploy nginx-ingress apply the following manifest on a control-plane node:
 ```shell
-$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.0/deploy/static/provider/cloud/deploy.yaml
+$ helm upgrade --install ingress-nginx ingress-nginx \
+    --repo https://kubernetes.github.io/ingress-nginx \
+    --namespace ingress-nginx --create-namespace
 ```
 
 ### Step 2: Verification
