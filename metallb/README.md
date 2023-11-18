@@ -66,8 +66,59 @@ $ kubectl api-resources| grep metallb
 #### Create IP Pool
 
 ```shell
-$ kubectl -n metallb-system apply -f pool-1.yml
+kubectl get nodes -o custom-columns=NODE:metadata.name,INTERNAL_IP:status.addresses[?(@.type == \"InternalIP\")].address
 ```
+
+Create file pool-1.yaml and put the ip address of the control-plane node in the address specification
+```yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 135.181.46.21/32 <<< put the ip of control-plane node if the ip of nodes are public ip
+  - 172.20.0.120-172.20.0.130 <<< if the ip of nodes are private ip
+```
+
+```shell
+$ kubectl -n metallb-system apply -f pool-1.yaml
+```
+
+Create file l2advertisement.yaml
+```yaml
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: homelab-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - first-pool
+```
+
+```shell
+$ kubectl -n metallb-system apply -f l2advertisement.yaml
+```
+
+Deploy test application 
+```shell
+$ kubectl -n default apply -f web-app-deployment.yml
+```
+
+Verify MetallB assigned an IP address
+```shell
+$ kubectl -n default get pods -o wide
+$ kubectl -n default get services -o wide
+```
+
+Run command below to test if load balancer is working
+```shell
+curl http://load-balancer-ip
+```
+
+
 
 ## Troubleshooting
 
