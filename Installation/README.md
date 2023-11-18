@@ -61,7 +61,7 @@ sudo docker run hello-world
 
 
 ```shell
-sudo apt-get install git-all
+sudo apt-get install git
 ```
 
 ```shell
@@ -88,14 +88,18 @@ go version
 ```
 
 ```shell
-cd cri-dockerd
+sudo apt-get install make
+```
+
+```shell
+cd ~/cri-dockerd
 make cri-dockerd
 ```
 
 ```shell
 # Run these commands as root
 
-cd cri-dockerd
+cd ~/cri-dockerd
 mkdir -p /usr/local/bin
 install -o root -g root -m 0755 cri-dockerd /usr/local/bin/cri-dockerd
 install packaging/systemd/* /etc/systemd/system
@@ -138,6 +142,8 @@ To see the stack trace of this error execute with --v=5 or higher
 ```shell
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/cri-dockerd.sock
 ```
+
+Ignore this line
 ```shell
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --control-plane-endpoint="10.0.0.2:6443" --cri-socket=unix:///var/run/cri-dockerd.sock
 ```
