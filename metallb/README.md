@@ -118,7 +118,41 @@ Run command below to test if load balancer is working
 curl http://load-balancer-ip
 ```
 
+Remove all web-app deployment before installing NGINX Ingress Conroller
 
+
+## Install NGINX Ingress Controller
+
+### Step 1: Installation of nginx-ingress
+You will find more detail about installing nginx-ingress in this [website](https://www.adaltas.com/en/2022/09/08/kubernetes-metallb-nginx/#step-1-installation-of-nginx-ingress)
+
+To deploy nginx-ingress apply the following manifest on a control-plane node:
+```shell
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.0/deploy/static/provider/cloud/deploy.yaml
+```
+
+### Step 2: Verification
+
+Using this command, we check if the EXTERNAL-IP field is pending or not.
+
+```shell
+$ kubectl get service ingress-nginx-controller --namespace=ingress-nginx
+```
+
+Check nginx-ingress pods
+```shell
+$ kubectl -n ingress-nginx get pods
+```
+
+The result would be something like this:
+```text
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-lsg8h        0/1     Completed   0          7m3s
+ingress-nginx-admission-patch-v8ddk         0/1     Completed   0          7m3s
+ingress-nginx-controller-5db7565549-tbrzt   1/1     Running     0          7m4s
+```
+
+[The ingress-nginx-admission pods are not expected to be running.](https://github.com/kubernetes/ingress-nginx/issues/8620)
 
 ## Troubleshooting
 
