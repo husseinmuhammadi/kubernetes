@@ -61,7 +61,7 @@ sudo docker run hello-world
 
 
 ```shell
-sudo apt-get install git-all
+sudo apt-get install git
 ```
 
 ```shell
