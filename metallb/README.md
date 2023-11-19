@@ -66,8 +66,93 @@ $ kubectl api-resources| grep metallb
 #### Create IP Pool
 
 ```shell
-$ kubectl -n metallb-system apply -f pool-1.yml
+kubectl get nodes -o custom-columns=NODE:metadata.name,INTERNAL_IP:status.addresses[?(@.type == \"InternalIP\")].address
 ```
+
+Create file pool-1.yaml and put the ip address of the control-plane node in the address specification
+```yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 135.181.46.21/32 <<< put the ip of control-plane node if the ip of nodes are public ip
+  - 172.20.0.120-172.20.0.130 <<< if the ip of nodes are private ip
+```
+
+```shell
+$ kubectl -n metallb-system apply -f pool-1.yaml
+```
+
+Create file l2advertisement.yaml
+```yaml
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: homelab-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - first-pool
+```
+
+```shell
+$ kubectl -n metallb-system apply -f l2advertisement.yaml
+```
+
+Deploy test application 
+```shell
+$ kubectl -n default apply -f web-app-deployment.yml
+```
+
+Verify MetallB assigned an IP address
+```shell
+$ kubectl -n default get pods -o wide
+$ kubectl -n default get services -o wide
+```
+
+Run command below to test if load balancer is working
+```shell
+curl http://load-balancer-ip
+```
+
+Remove all web-app deployment before installing NGINX Ingress Conroller
+
+
+## Install NGINX Ingress Controller
+
+### Step 1: Installation of nginx-ingress
+
+```shell
+$ helm upgrade --install ingress-nginx ingress-nginx \
+    --repo https://kubernetes.github.io/ingress-nginx \
+    --namespace ingress-nginx --create-namespace
+```
+
+### Step 2: Verification
+
+Using this command, we check if the EXTERNAL-IP field is pending or not.
+
+```shell
+$ kubectl get service ingress-nginx-controller --namespace=ingress-nginx
+```
+
+Check nginx-ingress pods
+```shell
+$ kubectl -n ingress-nginx get pods
+```
+
+The result would be something like this:
+```text
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-lsg8h        0/1     Completed   0          7m3s
+ingress-nginx-admission-patch-v8ddk         0/1     Completed   0          7m3s
+ingress-nginx-controller-5db7565549-tbrzt   1/1     Running     0          7m4s
+```
+
+[The ingress-nginx-admission pods are not expected to be running.](https://github.com/kubernetes/ingress-nginx/issues/8620)
 
 ## Troubleshooting
 
