@@ -19,3 +19,16 @@ spec:
   serviceAccountName: prometheus
   version: v2.22.1
   serviceMonitorSelector: {}
+  . . .
+  remoteWrite:
+  - url: "<https://grafana.com/docs/grafana-cloud/account-management/cloud-portal/>"
+    basicAuth:
+      username:
+        name: kubepromsecret
+        key: username
+      password:
+        name: kubepromsecret
+        key: password
+  replicaExternalLabelName: "__replica__"
+  externalLabels:
+    cluster: "tech-innovative"  
