@@ -10,29 +10,7 @@
 
 ## Command line tool (kubectl)
 
-### Pods
-
-```shell
-$ kubectl create -f pod-defenition.yaml
-```
-
-```shell
-$ kubectl describe pod pod-name
-```
-
-
-
-```shell
-$ kubectl get ns
-```
-
-```shell
-$ kubectl get namespaces
-```
-
-```shell
-$ kubectl create namespace nginx
-```
+[Kubectl](kubectl/README.md)
 
 ## Pods
 
