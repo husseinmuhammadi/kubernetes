@@ -34,5 +34,25 @@ $ kubectl create -f pod-defenition.yaml
 $ kubectl describe pod pod-name
 ```
 
+## Services
+
+### Port Forwarding
+
+```shell
+$ kubectl port-forward pod-name 8080:80
+```
+
+#### Port forward to a pod
+
+```shell
+$ kubectl port-forward pod-name 8080:80
+```
+
+#### Port forward to a service
+
+```shell
+$ kubectl port-forward svc/service-name 8080:80
+```
+
 
 
