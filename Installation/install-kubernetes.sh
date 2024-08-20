@@ -23,3 +23,12 @@ git clone https://github.com/Mirantis/cri-dockerd.git
 
 # Download go
 wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+
+# Install go
+sudo tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
+
+export PATH=$PATH:/usr/local/go/bin
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+
+go version
+
