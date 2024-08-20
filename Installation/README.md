@@ -23,7 +23,11 @@ $ chsh -s /bin/bash
 ```
 
 ### Kubeadm
+You can use this script to install Kubernetes on Debian 12
 
+```shell
+curl -sSL https://raw.githubusercontent.com/husseinmuhammadi/kubernetes/main/Installation/install-kubernetes.sh | bash
+```
 
 #### Install Docker Engine
 
