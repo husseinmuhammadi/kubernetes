@@ -77,13 +77,13 @@ git clone https://github.com/Mirantis/cri-dockerd.git
 Download GO lang
 
 ```shell
-wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
 ```
 
 Install GO lang
 
 ```shell
-sudo tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
 
 export PATH=$PATH:/usr/local/go/bin
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
@@ -96,8 +96,7 @@ sudo apt-get install make
 ```
 
 ```shell
-cd ~/cri-dockerd
-make cri-dockerd
+cd ~/cri-dockerd && make cri-dockerd
 ```
 
 ```shell
