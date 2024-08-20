@@ -19,7 +19,7 @@ sudo docker run hello-world
 
 # Install git
 sudo apt-get install -y git
-
-pwd
-ls
 git clone https://github.com/Mirantis/cri-dockerd.git
+
+# Download go
+wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
