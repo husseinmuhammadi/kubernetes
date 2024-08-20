@@ -32,3 +32,6 @@ echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
 
 go version
 
+# Compile cri-docker
+sudo apt-get install make
+cd ~/cri-dockerd && make cri-dockerd
