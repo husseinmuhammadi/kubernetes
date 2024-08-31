@@ -10,16 +10,20 @@ Login with root user
 
 ```shell
 # useradd -m hmohammadi
-
 # passwd hmohammadi
-
 # usermod -aG sudo hmohammadi
 ```
 
-Login with user
+Login with created user
 
 ```shell
 $ chsh -s /bin/bash
+```
+
+To avoid entering password you can add your ssh key to the authorized_keys file
+
+```shell
+ssh-copy-id -i ~/.ssh/id_ed25519.pub hmohammadi@server-ip
 ```
 
 ### Kubeadm
