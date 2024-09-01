@@ -9,9 +9,6 @@
 kubectl cluster-info
 ```
 
-
-
-
 ## [MetalLB Installation](https://metallb.universe.tf/installation/)
 
 ### Preparation
@@ -40,7 +37,7 @@ ipvs:
 To install MetalLB, apply the manifest:
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
 ```
 
 ### [Verification](https://github.com/morrismusumi/kubernetes/blob/main/clusters/homelab-k8s/apps/metallb-plus-nginx-ingress/README.md)
