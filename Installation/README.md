@@ -185,13 +185,13 @@ kubeadm join 65.109.143.100:6443 --token f7v1u4.dmpqqqcik4800mrs \
 ```
 
 ```shell
-  mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
 ```shell
-$ kubectl get pods -A 
+kubectl get pods -A 
 ```
 ```text
 NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
