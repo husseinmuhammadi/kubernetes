@@ -9,20 +9,6 @@
 kubectl cluster-info
 ```
 
-edit `/etc/systemd/system/kubelet.service.d/10-kubeadm.conf`
-add the `--node-ip` flag to `KUBELET_CONFIG_ARGS`
-
-```text
---node-ip=192.168.56.126
-```
-
-restart the kubelet service
-```shell
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
-```
-
-
 ## [MetalLB Installation](https://metallb.universe.tf/installation/)
 
 ### Preparation
@@ -51,7 +37,7 @@ ipvs:
 To install MetalLB, apply the manifest:
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
 ```
 
 ### [Verification](https://github.com/morrismusumi/kubernetes/blob/main/clusters/homelab-k8s/apps/metallb-plus-nginx-ingress/README.md)
@@ -102,7 +88,8 @@ spec:
 $ kubectl -n metallb-system apply -f l2advertisement.yaml
 ```
 
-Deploy test application 
+Any services with the type `LoadBalancer` will have a `EXTERNAL-IP` address
+Deploy test application and see if EXTERNAL-IP have a value 
 ```shell
 $ kubectl -n default apply -f web-app-deployment.yml
 ```
@@ -115,56 +102,9 @@ $ kubectl -n default get services -o wide
 
 Run command below to test if load balancer is working
 ```shell
-curl http://load-balancer-ip
+curl http://<load-balancer-ip>
 ```
 
-Remove all web-app deployment before installing NGINX Ingress Conroller
-
-
-## Install NGINX Ingress Controller
-
-### Step 1: Installation of nginx-ingress
-
-```shell
-$ helm upgrade --install ingress-nginx ingress-nginx \
-    --repo https://kubernetes.github.io/ingress-nginx \
-    --namespace ingress-nginx --create-namespace
-```
-
-### Step 2: Verification
-
-Using this command, we check if the EXTERNAL-IP field is pending or not.
-
-```shell
-$ kubectl get service ingress-nginx-controller --namespace=ingress-nginx
-```
-
-Check nginx-ingress pods
-```shell
-$ kubectl -n ingress-nginx get pods
-```
-
-The result would be something like this:
-```text
-NAME                                        READY   STATUS      RESTARTS   AGE
-ingress-nginx-admission-create-lsg8h        0/1     Completed   0          7m3s
-ingress-nginx-admission-patch-v8ddk         0/1     Completed   0          7m3s
-ingress-nginx-controller-5db7565549-tbrzt   1/1     Running     0          7m4s
-```
-
-[The ingress-nginx-admission pods are not expected to be running.](https://github.com/kubernetes/ingress-nginx/issues/8620)
-
-## Troubleshooting
-
-[How to know kube-proxy mode?](https://medium.com/tailwinds-navigator/kubernetes-tip-know-your-proxy-mode-63da34f92bf4)
-
-Kube-proxy uses either IPTables or IPVS to achieve this. By default, It’s IPTables but can be configured to run with IPVS mode. One can get to know proxy mode of one’s cluster using a simple command. In my case, it is IPtables as below.
-
-```shell
-curl localhost:10249/proxyMode
-```
-
-Kube-Proxy exposes port 10249 for a bunch of endpoints such as configz, metrics, health, proxyMode etc.
-
+Remove all web-app deployment before [Installing NGINX Ingress Controller](../ingress/README.md)
 
 
