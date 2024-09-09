@@ -242,3 +242,155 @@ And the result is
 
 The message shows that the user system service account default:default cannot get the pods from the default namespace
 
+# Service Accounts and Secrets
+
+To get the complete information of this article, please visit [ServiceAccounts and secrets](https://youtu.be/vk0EIznJJe0?si=yfYcRP1y89wiQYkH)
+
+**Kubernetes v 1.22**
+
+In this version when we create a service account, it will automatically create a secret for that service account
+
+```shell
+$ kubectl create serviceaccount demo
+```
+
+```shell    
+$ kubectl get secret
+```
+
+Here you can see that the secret is created for the service account `demo`
+```text
+NAME                  TYPE                                  DATA   AGE
+default-token-z559d   kubernetes.io/service-account-token   3      3d
+demo-token-4z5z5      kubernetes.io/service-account-token   3      3s
+```
+
+```shell
+$ kubectl describe secret demo-token-4z5z5
+```
+
+```text
+Name:         demo-token-4z5z5
+Namespace:    default
+Labels:       <none>
+Annotations:  kubernetes.io/service-account.name: demo
+              kubernetes.io/service-account.uid: 1b3b3b3b-3b3b-3b3b-3b3b-3b3b3b3b3b3b
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:     1025 bytes
+namespace:  7 bytes
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6Ik1YRjdVejhRMVZBNFhLRlQ4bGRHTFJCVkFzNTBNMmFWRk1ycWVPY3hVUVEifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiXSwiZXhwIjoxNzU3MzM2NTE1LCJpYXQiOjE3MjU4MDA1MTUsImlzcyI6Imh0dHBzOi8va3ViZXJuZXRlcy5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsIiwianRpIjoiNTRhMzk3ZDAtNjBlOS00Y2FiLTlhYWEtYTZmOTAwZDAwYWZmIiwia3ViZXJuZXRlcy5pbyI6eyJuYW1lc3BhY2UiOiJ0ZXN0Iiwibm9kZSI6eyJuYW1lIjoibGF6eS1jb21wdXRpbmctbm9kZS0xIiwidWlkIjoiOWY2ZjU5NWUtZjU5Ni00MTQ3LTkxNDUtNGM2ODFkNWRiOWNlIn0sInBvZCI6eyJuYW1lIjoic2ltcGxlLXBvZCIsInVpZCI6IjFiNzk5YmViLWNkNTQtNGZkNC04MDcyLWM3NWM2NjQ4NDMzZSJ9LCJzZXJ2aWNlYWNjb3VudCI6eyJuYW1lIjoiZGVmYXVsdCIsInVpZCI6IjhhMGFkZDFiLTFjYjAtNGYzOS1hZTM1LTYzOGQ3Mz
+```
+
+The generated token does not have any expiration date, so it will be valid until it is deleted
+
+**Kubernetes 1.24**
+
+In Kubernetes 1.24, if I create a service account, it will not automatically create a secret for that service account
+
+```shell
+$ kubectl create serviceaccount demo
+```
+
+```shell
+$ kubectl get serviceaccount demo
+```
+
+Here you can see that the secret is not created for the service account `demo`
+```text
+NAME   SECRETS   AGE
+demo   0         3s
+```
+
+We can create a secret for the service account `demo` using the following command
+```shell
+$ kubectl create token demo
+```
+
+Here you can see the result
+```text
+eyJhbGciOiJSUzI1NiIsImtpZCI6Ik1YRjdVejhRMVZBNFhLRlQ4bGRHTFJCVkFzNTBNMmFWRk1ycWVPY3hVUVEifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiXSwiZXhwIjoxNzI1ODI4NjQzLCJpYXQiOjE3MjU4MjUwNDMsImlzcyI6Imh0dHBzOi8va3ViZXJuZXRlcy5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsIiwianRpIjoiNGI2ZmVjNDgtNmNjYS00ZDYyLWI0YmUtNzc5YzM3OGE4ZDNiIiwia3ViZXJuZXRlcy5pbyI6eyJuYW1lc3BhY2UiOiJ0ZXN0Iiwic2VydmljZWFjY291bnQiOnsibmFtZSI6ImRlbW8iLCJ1aWQiOiJjMmI1YWIwMi0xYjJhLTQ2MTQtYmI4ZS0yZTAwZWY1NmEyM2IifX0sIm5iZiI6MTcyNTgyNTA0Mywic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnRlc3Q6ZGVtbyJ9.gViCTzq_VQOvD57yQkHKVsKIuME1XhlT3mW9tu47F-81OQi_VcRVwUSMofN9nFlrkXsesaN6xDTg-5cV-Pi7hHepXQFs1q0O7XNsHxwmAQuB2ONhYoZ4QN2XdzHnvMPzpRhHaGHOAc8oa-8uAYwmrMXO2xO8bClSLDafQMNuh_MzSqzXy_Ml8OZEwes2dbbk0qxin1THxSx53ELe1CNwRIe9XoImNG9wcmW8n2D0wURoNL-gKvc7kkCgZgbwXiA664WhxIlxnLvnRdAWT9NPDP_ZK45Rf4EPHQwv2j35HMvCEUrmWmOhEIqKD8CPmBy9PXULNxQZ4_2Vq_LiDPPBEw
+```
+
+This time the created token has an expiration date and the duration is **1 hour**
+You can create a token with a different expiration date using the following command
+```shell
+$ kubectl create token demo --duration=1000h
+```
+
+After create a token for the specific service account, still you will see there is no secret created for the service account
+
+```shell
+$ kubectl get serviceaccount demo
+```
+
+```text
+NAME   SECRETS   AGE
+demo   0         3s
+```
+
+of if you get the service account in yaml format, you will see that there is no secret created for the service account
+
+```shell
+$ kubectl get serviceaccount demo -o yaml
+```
+
+```text
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2024-09-08T07:32:55Z"
+  name: demo
+  namespace: default
+  resourceVersion: "996776"
+  uid: e3a495a3-286e-4d64-b3ef-e5cbd637ebe8
+```
+
+You can manually create a secret for the service account after creating the service account
+Create a yaml file with the name `secret.yaml`
+```yaml
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: demo
+  annotations:
+    kubernetes.io/service-account.name: "demo"
+```
+
+```shell
+$ kubectl apply -f secret.yaml
+```
+
+You can see the secret created for the service account `demo`
+```shell
+$ kubectl get secret
+```
+
+```text
+NAME   TYPE                                  DATA   AGE
+demo   kubernetes.io/service-account-token   3      8h
+```
+
+```shell
+$ kubectl describe secret demo
+```
+
+```text
+Name:         demo
+Namespace:    default
+Labels:       kubernetes.io/legacy-token-last-used=2024-09-08
+Annotations:  kubernetes.io/service-account.name: github-actions
+              kubernetes.io/service-account.uid: e3a495a3-286e-4d64-b3ef-e5cbd637ebe8
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:     1107 bytes
+namespace:  7 bytes
+token:      eyJhbGciOiJSUzI1N...
+```
