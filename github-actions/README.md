@@ -67,8 +67,6 @@ kubectl create clusterrolebinding continuous-deployment \
     --serviceaccount=default:github-actions
 ```
 
-**Kubernetes version**
-
 When we created the service account, a token was automatically generated for it and stored in a secret. 
 We'll need to inspect the service account to find the name of the associated secret, 
 which will be listed under `secrets` and starts with `github-actions-token`:
@@ -76,6 +74,8 @@ which will be listed under `secrets` and starts with `github-actions-token`:
 ```shell
 kubectl get serviceaccounts github-actions -o yaml
 ```
+
+By creating the service account, it will automatically create a secret for the service account.
 
 ```text
 apiVersion: v1
@@ -91,6 +91,27 @@ Using the name of the secret returned by the service account, retrieve the YAML 
 ```shell
 kubectl get secret <token-secret-name> -o yaml
 ```
+
+Since version 1.24, Kubernetes will not generate the token automatically for the service account.
+You will need to create the token manually. See [Service Account](../kubernetes/service-account/README.md) for more information.
+
+You can manually create a secret for the service account after creating the service account
+Create a yaml file with the name `secret.yaml`
+```yaml
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: github-actions
+  annotations:
+    kubernetes.io/service-account.name: "github-actions"
+```
+
+```shell
+$ kubectl apply -f secret.yaml
+```
+
+Get the yaml output of the secret and use it as the value for the GitHub Actions secret.
 
 Create a new GitHub Actions secret named `KUBERNETES_SECRET`, and use the full YAML output of the previous 
 `kubectl get secret` command as the value for the GitHub Actions secret. 
