@@ -10,20 +10,28 @@ Login with root user
 
 ```shell
 # useradd -m hmohammadi
-
 # passwd hmohammadi
-
 # usermod -aG sudo hmohammadi
 ```
 
-Login with user
+Login with created user
 
 ```shell
 $ chsh -s /bin/bash
 ```
 
-### Kubeadm
+To avoid entering password you can add your ssh key to the authorized_keys file
 
+```shell
+ssh-copy-id -i ~/.ssh/id_ed25519.pub hmohammadi@server-ip
+```
+
+### Kubeadm
+You can use this script to install Kubernetes on Debian 12
+
+```shell
+curl -sSL https://raw.githubusercontent.com/husseinmuhammadi/kubernetes/main/Installation/install-kubernetes.sh | bash
+```
 
 #### Install Docker Engine
 
@@ -73,13 +81,13 @@ git clone https://github.com/Mirantis/cri-dockerd.git
 Download GO lang
 
 ```shell
-wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
 ```
 
 Install GO lang
 
 ```shell
-sudo tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
 
 export PATH=$PATH:/usr/local/go/bin
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
@@ -92,8 +100,7 @@ sudo apt-get install make
 ```
 
 ```shell
-cd ~/cri-dockerd
-make cri-dockerd
+cd ~/cri-dockerd && make cri-dockerd
 ```
 
 ```shell
@@ -111,19 +118,25 @@ systemctl enable --now cri-docker.socket
 
 #### [Installing kubeadm, kubelet and kubectl](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl)
 
+These instructions are for Kubernetes v1.31.
+
 ```shell
 sudo apt-get update
-sudo apt-get install -y apt-transport-https ca-certificates curl
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
-curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+# If the directory `/etc/apt/keyrings` does not exist, it should be created before the curl command, read the note below.
+# sudo mkdir -p -m 755 /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+# This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
-
+# (Optional) Enable the kubelet service before running kubeadm:
+sudo systemctl enable --now kubelet
 ```
 
 #### [Creating a cluster with kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
@@ -172,13 +185,13 @@ kubeadm join 65.109.143.100:6443 --token f7v1u4.dmpqqqcik4800mrs \
 ```
 
 ```shell
-  mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
 ```shell
-$ kubectl get pods -A 
+kubectl get pods -A 
 ```
 ```text
 NAMESPACE     NAME                                        READY   STATUS    RESTARTS   AGE
